@@ -31,7 +31,8 @@ class Profile(models.Model):
 	gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=False,
 	blank=True, default='')
 	last_updated = models.DateTimeField(auto_now_add=True)
-
+	class Meta:
+		managed = False
 	def __str__(self):
 		return self.user.username
 
@@ -58,7 +59,8 @@ class UserLogs(models.Model):
 	timestamp = models.DateTimeField()
 	# action =
 	# result =
-
+	class Meta:
+		managed = False
 
 def path_and_rename(instance, filename):
 	path = ''
@@ -82,7 +84,8 @@ class UserImages(models.Model):
 	image = models.ImageField(upload_to=path_and_rename, blank=True, null=True)
 	is_deleted = models.BooleanField(default=False)
 	uploaded_at = models.DateTimeField(auto_now_add=True)
-
+	class Meta:
+		managed = False
 
 class PhoneTypes(models.Model):
 	class Meta:
@@ -90,7 +93,8 @@ class PhoneTypes(models.Model):
 
 	phone_type = models.CharField(max_length=20, primary_key=True)
 	description = models.CharField(max_length=300, null=True, blank=True)
-
+	class Meta:
+		managed = False
 	def __str__(self):
 		return self.phone_type
 
@@ -112,7 +116,8 @@ class DocumentTypes(models.Model):
 
 	doc_type = models.CharField(max_length=40, primary_key=True)
 	description = models.CharField(max_length=100, null=True, blank=True)
-
+	class Meta:
+		managed = False
 	def __str__(self):
 		return self.doc_type
 
@@ -123,7 +128,8 @@ class AddressTypes(models.Model):
 
 	addr_type = models.CharField(max_length=40, primary_key=True)
 	description = models.CharField(max_length=100, null=True, blank=True)
-
+	class Meta:
+		managed = False
 	def __str__(self):
 		return self.addr_type
 
@@ -136,11 +142,12 @@ class Documents(models.Model):
 	doc_issued_at = models.DateField(null=True, blank=True)
 	doc_issued_by = models.CharField(max_length=100, blank=True, null=True)
 	doc_is_confirmed = models.BooleanField(default=False)
-
+	class Meta:
+		managed = False
 
 class BillingAddresses(models.Model):
 	class Meta:
-		app_label = 'userAccount'
+		managed = False
 
 	account = models.ForeignKey(User, related_name='billing_addresses', on_delete=models.CASCADE)
 	addr_type = models.ForeignKey(AddressTypes, on_delete=models.RESTRICT)
