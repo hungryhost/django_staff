@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime, date
 
+from .validators import key_validator, card_validator
 import uuid
 
 
@@ -61,7 +62,7 @@ class Card(models.Model):
 		lock (Lock): Required. Lock for which access is given.
 	"""
 	id = models.BigAutoField('id', primary_key=True)
-	card_id = models.CharField('card', unique=True, max_length=9)
+	card_id = models.CharField('card', validators=[card_validator], unique=True, max_length=9)
 	hash_id = models.CharField('hash_id', max_length=256, unique=True)
 	is_master = models.BooleanField('is_master', null=False, default=False)
 	lock = models.ForeignKey(Lock, models.CASCADE, 'lock_key',
@@ -94,7 +95,7 @@ class Key(models.Model):
 		access_stop (Datetime): Required. Time when access to lock ends.
 	"""
 	id = models.BigAutoField('id', primary_key=True)
-	code = models.PositiveIntegerField('code', default=None,
+	code = models.PositiveIntegerField('code', validators=[key_validator], default=None,
 	                                   editable=False)
 	hash_code = models.CharField('hash_code', max_length=256, unique=True)
 	lock = models.ForeignKey(Lock, models.CASCADE, 'lock_code',
