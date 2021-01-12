@@ -13,7 +13,8 @@ class ActionTypes(models.Model):
 	"""
 	act_type = models.CharField(max_length=30, primary_key=True)
 	description = models.CharField(max_length=150)
-
+	class Meta:
+		managed = False
 
 class ResultTypes(models.Model):
 	"""
@@ -23,7 +24,8 @@ class ResultTypes(models.Model):
 	"""
 	res_type = models.CharField(max_length=30, primary_key=True)
 	description = models.CharField(max_length=150)
-
+	class Meta:
+		managed = False
 
 class AccountTypes(models.Model):
 	"""
@@ -32,8 +34,11 @@ class AccountTypes(models.Model):
 	WARNING: MUST BE FILLED OUT INITIALLY
 	"""
 	acc_type = models.CharField(max_length=50, primary_key=True)
-
+	class Meta:
+		managed = False
 
 class PermissionLevels(models.Model):
 	p_level = models.PositiveIntegerField(primary_key=True)
 	description = models.CharField(max_length=150, null=True, blank=True)
+	class Meta:
+		managed = False

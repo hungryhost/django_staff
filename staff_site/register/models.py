@@ -38,7 +38,8 @@ class Lock(models.Model):
         self.last_echo = datetime.utcnow()
         if save:
             self.save()
-
+	class Meta:
+		managed = False
     @classmethod
     def get_instance_by_hash_id(cls, hash_id):
         """Finds locks by hashed uuid (exact match).
@@ -66,7 +67,8 @@ class Card(models.Model):
     lock = models.ForeignKey(Lock, models.CASCADE, 'lock_key',
                              null=False, verbose_name='lock_id',
                              db_index=True)
-
+	class Meta:
+		managed = False
     @classmethod
     def get_instance_by_hash_id(cls, hash_id):
         """Finds card by hashed card_id.
@@ -98,7 +100,8 @@ class Key(models.Model):
                              db_index=True)
     access_start = models.DateTimeField('access_start')
     access_stop = models.DateTimeField('access_stop')
-
+	class Meta:
+		managed = False
     @classmethod
     def get_instance_by_hash_id(cls, hash_id):
         """Finds key by hashed uuid.
