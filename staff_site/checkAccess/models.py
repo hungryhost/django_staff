@@ -22,5 +22,6 @@ class Logs(models.Model):
     class Meta(object):
         ordering = ['-try_time']
         db_table = 'Logs'
+        managed = False
 
 
