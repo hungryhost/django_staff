@@ -14,8 +14,10 @@ class PropertyTypes(models.Model):
 	"""
 	property_type = models.IntegerField(primary_key=True, null=False, blank=False)
 	description = models.CharField(max_length=150, null=False, blank=False)
+
 	class Meta:
 		managed = False
+
 	def __int__(self):
 		return self.property_type
 
@@ -61,8 +63,10 @@ class Property(models.Model):
 	# maximum length of bookings for the property in minutes
 	# if -1, then no limit
 	maximum_booking_length = models.IntegerField(default=-1, null=False, blank=True)
+
 	class Meta:
 		managed = False	
+
 	def __str__(self):
 		return self.title
 
@@ -86,8 +90,10 @@ class Ownership(models.Model):
 										related_name='permission_levels',
 										on_delete=models.CASCADE)
 	#    initial_owner_object = InitialOwnershipManager()
+
 	class Meta:
 		managed = False
+
 	def __str__(self):
 		return self.user.email + " " + str(self.permission_level_id)
 
@@ -109,6 +115,7 @@ class PropertyLog(models.Model):
 	class Meta:
 		managed = False
 
+
 def path_and_rename(instance, filename):
 	path = ''
 	ext = filename.split('.')[-1]
@@ -120,8 +127,7 @@ def path_and_rename(instance, filename):
 		filename = '{}.{}'.format(uuid4().hex, ext)
 	# return the whole path to the file
 	return os.path.join(path, filename)
-	class Meta:
-		managed = False
+
 
 class PremisesImages(models.Model):
 	premises = models.ForeignKey(Property, to_field='id',
@@ -132,8 +138,10 @@ class PremisesImages(models.Model):
 
 	def set_main(self):
 		self.is_main = True
+
 	class Meta:
 		managed = False
+
 
 class PremisesAddresses(models.Model):
 	premises = models.OneToOneField(Property, related_name='property_address', on_delete=models.CASCADE,
@@ -149,8 +157,10 @@ class PremisesAddresses(models.Model):
 	directions_description = models.CharField(max_length=500, blank=True, null=False)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
+
 	class Meta:
 		managed = False
+
 
 class Bookings(models.Model):
 	booked_from = models.DateTimeField(null=False, blank=False)
@@ -174,6 +184,7 @@ class Bookings(models.Model):
 	is_deleted = models.BooleanField(default=False, null=False, blank=False)
 	class Meta:
 		managed = False
+
 	def __str__(self):
 		return self.status + " " + "client: " + self.client_email + " from: " + str(self.booked_from.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)) \
 			+ " Until: " + str(self.booked_until.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None))
@@ -187,5 +198,6 @@ class LocksWithProperties(models.Model):
 	description = models.CharField(max_length=200, blank=True, null=False)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
+
 	class Meta:
 		managed = False
