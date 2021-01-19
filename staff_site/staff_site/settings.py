@@ -46,6 +46,8 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+	'rest_framework_api_key',
+	'rest_framework',
 	'properties',
 	'userAccount',
 	'corsheaders',
@@ -96,19 +98,15 @@ TEMPLATE_DIRS = (
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.postgresql',
-		'NAME': 'rentdbtest',
-		"USER": os.environ.get("DB_USER"),
-		"PASSWORD": os.environ.get("DB_PASSWORD"),
-		"HOST": os.environ.get("DB_HOST", "localhost"),
-		"PORT": os.environ.get("DB_PORT", "5432"),
-		'OPTIONS': {
-			'options': '-c search_path=public'
-		},
+if DEBUG:
+	DATABASES = {
+		'default': {
+			'ENGINE': 'django.db.backends.sqlite3',
+			'NAME': 'C:/web-294/web-294/backend/rentAccess/db.sqlite3',
+		}
 	}
-}
+else:
+	DATABASES = {'default': env.db('DATABASE_URL')}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
