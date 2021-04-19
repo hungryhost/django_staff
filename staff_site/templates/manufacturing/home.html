@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+ <main role="main" class="container">
+ <div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="text-justify">Manufacturing Department</h1>
+    <p class="lead">Вы находитесь на странице управления производством замков.</p>
+  </div>
+</div>
+<div class="row"  >
+    <div class="col-sm-6" style="margin-top: 10px">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Мои заявки</h5>
+        <p class="card-text">Перейти к просмотру заявок, над которыми я работаю.</p>
+        <a href="#" class="btn btn-primary">Перейти</a>
+      </div>
+    </div>
+    </div>
+  <div class="col-sm-6" style="margin-top: 10px">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Все входящие заявки</h5>
+        <p class="card-text">
+           Входящие заявки на создание замков.
+        </p>
+        <a href="{% url 'sales-incoming' %}" class="btn btn-primary">Перейти</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6" style="margin-top: 10px">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Управление замками</h5>
+        <p class="card-text">Управление замками: версии, обновления и многое другое.</p>
+        <a href="#" class="btn btn-primary">Перейти</a>
+      </div>
+    </div>
+  </div>
+    <div class="col-sm-6" style="margin-top: 10px">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Форма добавления замка</h5>
+        <p class="card-text">Добавление замка после производства.</p>
+        <a href="#" class="btn btn-primary">Перейти</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+ </main>
+{% endblock content %}

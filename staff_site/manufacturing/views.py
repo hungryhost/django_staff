@@ -18,7 +18,7 @@ from backendIntegrations.models import LockPurchaseRequests
 
 @login_required
 def main(request):
-	return render(request, 'sales/home.html')
+	return render(request, 'manufacturing/home.html')
 
 
 @login_required
@@ -26,7 +26,7 @@ def lock_incoming(request):
 	context = {
 		'incoming_messages': LockPurchaseRequests.objects.using('lr_backend_main').all()
 	}
-	return render(request, 'sales/incoming_list.html', context)
+	return render(request, 'manufacturing/incoming_list.html', context)
 
 
 @login_required

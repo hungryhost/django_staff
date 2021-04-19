@@ -198,26 +198,40 @@ else:
 		}
 	}
 	SESSION_CACHE_ALIAS = "default"
+
 INSTALLED_APPS = [
-	'django.contrib.admin',
+	'django.contrib.staticfiles',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
 	'django.contrib.messages',
-	'django.contrib.staticfiles',
-	'rest_framework',
-	'rest_framework_swagger',
-	'rest_framework_simplejwt.token_blacklist',
+	'django.contrib.sites',
+	'django.contrib.admin',
+	'todo',
 	'watchman',
-	'cities_light',
+	'backendIntegrations',
+	'encrypted_fields',
+	'crispy_forms',
+	'userAccount',
+	'manufacturing',
 	'django_filters',
-	'django_countries',
+	#'django_countries',
 	'storages',
 	'phone_field',
 	'timezone_field',
 	'corsheaders',
-]
+	'django_otp',
+	'django.contrib.admindocs',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_hotp',
+    'django_otp.plugins.otp_static',
+	'two_factor',
+	'twoFactor',
 
+]
+SETTINGS_PATH = os.path.normpath(os.path.dirname(__file__))
+
+SITE_ID = 1
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
@@ -225,12 +239,14 @@ MIDDLEWARE = [
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django_otp.middleware.OTPMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
-#AUTH_USER_MODEL = 'userAccount.CustomUser'
-
+AUTH_USER_MODEL = 'userAccount.InternalUser'
+LOGIN_REDIRECT_URL = 'lr-main'
+LOGIN_URL = 'login'
 ROOT_URLCONF = 'staff_site.urls'
 
 TEMPLATES = [
@@ -266,7 +282,18 @@ if not DEBUG:
 			"HOST": env("DB_HOST"),
 			"PORT": env("DB_PORT"),
 			"OPTIONS": {
-				'options': '-c search_path=django'
+				'options': '-c search_path=internal'
+			}
+		},
+		'lr_backend_main': {
+			'ENGINE': 'django.db.backends.postgresql',
+			'NAME': env("DB_NAME"),
+			"USER": env("DB_USER"),
+			"PASSWORD": env("DB_PASSWORD"),
+			"HOST": env("DB_HOST"),
+			"PORT": env("DB_PORT"),
+			"OPTIONS": {
+				'options': '-c search_path=main'
 			}
 		}
 	}
@@ -275,8 +302,13 @@ else:
 		'default': {
 			'ENGINE': 'django.db.backends.sqlite3',
 			'NAME': 'db.sqlite3',
+		},
+		'lr_backend_main': {
+			'ENGINE': 'django.db.backends.sqlite3',
+			'NAME': 'C:/web-294/web-294/rentAccess/db.sqlite3',
 		}
 	}
+DATABASE_ROUTERS = ['staff_site.integration_db_router.IntegrationRouter']
 AUTH_PASSWORD_VALIDATORS = [
 	{
 		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -306,10 +338,10 @@ USE_TZ = True
 # when DEBUG == True DRF will render errors as html pages
 USE_S3 = env.bool('USE_S3', default=False)
 if USE_S3:
-	AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-	AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-	AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-	AWS_DEFAULT_ACL = None
+	AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID')
+	AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY')
+	AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME')
+	AWS_DEFAULT_ACL = 'public-read'
 	AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 	AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 	# s3 static settings
@@ -319,10 +351,8 @@ if USE_S3:
 	# s3 public media settings
 	PUBLIC_MEDIA_LOCATION = 'media'
 	MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-	DEFAULT_FILE_STORAGE = 'rentAccess.storage_backends.PublicMediaStorage'
-	# s3 private media settings
-	PRIVATE_MEDIA_LOCATION = 'private'
-	PRIVATE_FILE_STORAGE = 'rentAccess.storage_backends.PrivateMediaStorage'
+	DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 else:
 	STATIC_URL = '/static/'
 	STATIC_ROOT = '/static/'
@@ -333,7 +363,9 @@ else:
 STATICFILES_DIRS = [
 	root("static"),
 ]
-
+FIELD_ENCRYPTION_KEYS = env("LOCK_ENCRYPTION_KEYS").split(",")
+KEY_HASH = env.str('KEY_HASH')
+CARD_HASH = env.str('CARD_HASH')
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", default='redis://127.0.0.1:6379')
 CELERY_RESULT_BACKEND = env.str('CELERY_RESULT_BACKEND', default='redis://127.0.0.1:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']

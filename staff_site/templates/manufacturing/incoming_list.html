@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static "buttons_man_table.css" %}">
+    <main role="main" class="container">
+    <div class="card">
+  <div class="card-body">
+  По умолчанию отображаются все заявки. Сортировка происходит сначала по дате (сначала старые),
+      а затем по количеству замков в заказе (сначала с наибольшим количеством).
+  </div>
+</div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href=".">Все</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Не принятые к работе</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Принятые к работе</a>
+                    </li>
+
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Клиент</th>
+                <th scope="col">Телефон</th>
+                <th scope="col">Количество</th>
+                <th scope="col">Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for message in incoming_messages %}
+                <tr>
+                    <th scope="row">{{  message.id }}</th>
+                    <td>{{ message.email }}</td>
+                    <td>{{ message.phone}}</td>
+                    <td>{{ message.quantity}}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary" >Primary</button>
+                        <button type="button" class="btn btn-outline-primary">Secondary</button>
+                    <td>
+                </tr>
+
+                </tbody>
+            {% endfor %}
+        </table>
+
+    </main>
+{% endblock content %}
