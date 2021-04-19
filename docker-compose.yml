@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  django:
+    build: ./django_staff
+    container_name: django_staff
+    ports:
+      - '10.0.0.2:8008:8008'
+    env_file:
+      - ./lockBackend/.env
+    command: gunicorn lockBackend.wsgi:application --bind 0.0.0.0:8008
+    volumes:
+      - ./lockBackend/:/usr/src/app-staff/
