@@ -43,7 +43,6 @@ class LockUpdateManufacturingForm(forms.ModelForm):
             #'version',
             #'firmware',
             'is_approved'
-
         ]
     VERSION_CHOICES = [
         (1, 'Ethernet'),
