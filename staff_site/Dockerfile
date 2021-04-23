@@ -10,7 +10,6 @@ ENV PYTHONUNBUFFERED 1
 COPY requirements.txt .
 COPY crontab_mailing .
 COPY mailing.sh .
-RUN apt-get update && apt-get -y install cron
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
 
 
@@ -44,6 +43,8 @@ RUN chmod +rwx ./logs/
 #CMD  ['python manage.py migrate --noinput']
 FROM ubuntu:latest
 WORKDIR /usr/src/app-staff
+RUN apt-get update && apt-get -y install cron
+
 COPY crontab_mailing /etc/cron.d/crontab
 RUN chmod 0644 /etc/cron.d/crontab
 RUN crontab /etc/cron.d/crontab
