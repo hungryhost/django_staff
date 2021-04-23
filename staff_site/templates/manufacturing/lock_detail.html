@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col col-sm-10" style="margin-top: 10px">
+                <a href="{% url 'manufacturing-lock-list' %}" class="col-md-8 col-lg-3 btn btn-primary" style="margin-bottom: 10px">
+                    Назад к списку замков</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body" style="text-align: center">
+                Страница замка с id: {{ lock.id }}
+
+            </div>
+
+        </div>
+        <div class="alert alert-info" style="text-align: center; margin-top:10px">
+                Статус: {{ lock.get_current_stage_display }}
+
+            </div>
+        <div class="alert alert-info" style="text-align: center; margin-top:10px">
+                Тип: {{ lock.get_current_type_display }}
+
+            </div>
+        <div class="row">
+
+            <div class="col" style="margin-top: 10px">
+                <a href="{% url 'manufacturing-lock-update' lock.id %}" class=" btn btn-warning" style="margin-bottom: 10px">
+                    Изменить информацию о замке</a>
+
+                {% if keys %}
+                    <a href="{% url 'manufacturing-lock-update-master-key' lock.id %}" class=" btn btn-warning" style="margin-bottom: 10px">
+                    Изменить мастер-ключ замка</a>
+                {% else %}
+                    <a href="{% url 'manufacturing-lock-create-master-key' lock.id %}" class=" btn btn-warning" style="margin-bottom: 10px">
+                    Сгенерировать мастер-ключ</a>
+                {% endif %}
+
+                <a href="{% url 'manufacturing-lock-update' lock.id %}" class=" btn btn-warning disabled" style="margin-bottom: 10px">
+                    Инициировать замену</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" style="margin-top: 10px">
+                <a href="{% url 'manufacturing-lock-delete' lock.id %}" class="btn btn-danger" style="margin-bottom: 10px">
+                    Удалить замок</a>
+                {% if keys %}
+                <a href="{% url 'manufacturing-lock-delete' lock.id %}" class=" btn btn-danger" style="margin-bottom: 10px">
+                    Удалить мастер-ключ для замка</a>
+                {% endif %}
+                <a href="{% url 'manufacturing-lock-delete' lock.id %}" class=" btn btn-danger" style="margin-bottom: 10px">
+                    Удалить ключи для замка</a>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+
+            <div class="col" style="margin-top: 10px">
+
+                <div class="list-group" style="text-align: center; font-size: small">
+                    <a class="list-group-item-heading list-group-item" style="text-align: center; font-size: medium">
+                        Информация о замке
+                    </a>
+                    <div class="list-group-item">
+                        <a class="list-group-item" style="text-align: center">Описание</a>
+                        <a class="list-group-item">{{ lock.description }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item" style="text-align: center">Версия</a>
+                        <a class="list-group-item">{{ lock.get_version_display }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item" style="text-align: center">Версия ПО</a>
+                        <a class="list-group-item">{{ lock.firmware }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item" style="text-align: center">Создан</a>
+                        <a class="list-group-item">{{ lock.created_at|date:'Y-m-d H:i:s e'  }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item" style="text-align: center">Изменён</a>
+                        <a class="list-group-item">{{ lock.updated_at|date:'Y-m-d H:i:s e'  }}</a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col" style="margin-top: 10px">
+                <div class="list-group" style="text-align: center; font-size: small">
+                    <a class="list-group-item-heading list-group-item" style="text-align: center; font-size: medium">
+                        Параметры замка
+                    </a>
+                    <div class="list-group-item">
+                        <a class="list-group-item" style="text-align: center">Код подключения</a>
+                        <a class="list-group-item">{{ lock.linking_code }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item">HASH_ID</a>
+                        <a class="list-group-item">{{ lock.hash_id|safe }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item">UUID</a>
+                        <a class="list-group-item">{{ lock.uuid|safe }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item">Master-key</a>
+                        <a class="list-group-item">{{ keys }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item">IS ON</a>
+                        <a class="list-group-item">{{ lock.is_on }}</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item">IS APPROVED</a>
+                        <a class="list-group-item">{{ lock.is_approved }}</a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col" style="margin-top: 10px">
+                <div class="list-group">
+                    <a class="list-group-item-heading list-group-item" style="text-align: center">
+                        Документация
+                    </a>
+                    {% if manual_url == '#' %}
+                    <div class="list-group-item list-group-item-danger">
+                        У замка нет доступной инструкции.
+                    </div>
+                    {% else %}
+                    <a href="{{ manual_url }}" target="_blank" class="list-group-item list-group-item-action">Скачать
+                        инструкцию (PDF)</a>
+                    {% endif  %}
+                    {% if user_file_url == '#' %}
+                    <div class="list-group-item list-group-item-danger">
+                        У замка ещё не созданы файлы пользователя.
+                    </div>
+                    {% else %}
+                    <a href="{{ user_file_url }}" class="list-group-item list-group-item-action">Скачать информацию о замке
+                        для пользователя (PDF)</a>
+                    <div class="list-group-item">
+                        Последнее обновление документации:
+                        {{ user_file_created_at|date:'Y-m-d H:i:s e' }}
+                    </div>
+                    {% endif %}
+                    <a href="{% url 'manufacturing-lock-update-docs' lock.id %}"
+                       class="list-group-item list-group-item-action list-group-item-success">
+                        Сгенерировать/обновить документацию.
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

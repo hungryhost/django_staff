@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-md-4">
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Удалить замок</legend>
+                    <div class="alert alert-warning">Вы уверены, что хотите удалить замок с id {{ object.id }}?</div>
+                    <div class="alert alert-danger">Удаление замка приведёт к удалению всех сопутствующих документов, кодов, карт и т.д.</div>
+                </fieldset>
+        </div>
+    </div>
+{% endblock content %}

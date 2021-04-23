@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_field %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% load widget_tweaks %}
+{% block content %}
+
+    <link rel="stylesheet" type="text/css" href="{% static "buttons_man_table.css" %}">
+    <main role="main" class="container">
+        <div style="margin-bottom: 10px">
+            <a href="{% url 'manufacturing-main' %}" class="btn btn-primary" style="margin-bottom: 10px">Назад</a>
+            <a href="{% url 'manufacturing-create-lock' %}" class="btn btn-primary" style="margin-bottom: 10px">Добавить замок</a>
+
+        </div>
+        <div class="card">
+            <div class="card-body">
+                Все добавленные замки.
+                <span class="badge badge-dark">{{ locks.count }}</span>
+            </div>
+
+        </div>
+        <form method="get" style="font-size: smaller">
+            <div class="well">
+                <h4 style="margin-top: 10px">Фильтры</h4>
+                <div class="row">
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.firmware.label_tag }}
+                        {% render_field filter.form.firmware class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.version.label_tag }}
+                        {% render_field filter.form.version class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.current_type.label_tag }}
+                        {% render_field filter.form.current_type class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.current_stage.label_tag }}
+                        {% render_field filter.form.current_stage class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.is_approved.label_tag }}
+                        {% render_field filter.form.is_approved class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.hash_id.label_tag }}
+                        {% render_field filter.form.hash_id class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.uuid.label_tag }}
+                        {% render_field filter.form.uuid class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.id.label_tag }}
+                        {% render_field filter.form.id class="form-control" %}
+                    </div>
+                    <div class="form-group col-sm-4 col-md-3">
+                        {{ filter.form.description.label_tag }}
+                        {% render_field filter.form.description class="form-control" %}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-search"></span> Искать
+                </button>
+                <a class="btn btn-warning" href="{% url 'manufacturing-lock-list' %}">Очистить фильтры</a>
+            </div>
+        </form>
+
+        <table class="table table-striped" style="font-size: smaller">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Версия</th>
+                <th scope="col">Версия ПО</th>
+                <th scope="col">Тип</th>
+                <th scope="col">Стадия</th>
+                <th scope="col">Дата добаления</th>
+                <th scope="col">Дата Изменения</th>
+            </tr>
+            </thead>
+            <tbody>
+            <div class="card" style="margin-bottom: 10px">
+                <div class="card-body">
+                Count: {{ filter.qs.count }}
+                </div>
+            </div>
+
+            {% for lock in filter.qs %}
+                <tr>
+                    <th scope="row"> {{  lock.id }}</th>
+                    <td>{{ lock.description }}</td>
+                    <td>{{ lock.get_version_display}}</td>
+                    <td>{{ lock.get_firmware_display}}</td>
+                    <td>{{ lock.get_current_type_display}}</td>
+                    <td>{{ lock.get_current_stage_display}}</td>
+                    <td>{{ lock.created_at|date:'Y-m-d H:i:s e' }}</td>
+                    <td>{{ lock.updated_at|date:'Y-m-d H:i:s e' }}</td>
+                    <td>
+                        <a href="{% url 'manufacturing-lock-detail' lock.id %}" class="btn btn-primary">Перейти</a>
+                    <td>
+                </tr>
+            {% endfor %}
+                </tbody>
+
+        </table>
+
+    </main>
+
+{% endblock content %}
