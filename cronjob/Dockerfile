@@ -1,8 +1,8 @@
 FROM python:3.8.6 as builder
 WORKDIR /usr/src/app-staff
-COPY /usr/src/app-staff/requirements.txt .
-COPY /usr/src/app-staff/crontab_mailing .
-COPY /usr/src/app-staff/mailing.sh .
+COPY staff_site/requirements.txt .
+COPY staff_site/crontab_mailing .
+COPY staff_site/mailing.sh .
 RUN chmod +rwx mailing.sh
 RUN chmod +rwx crontab_mailing
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
