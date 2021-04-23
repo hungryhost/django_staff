@@ -11,9 +11,9 @@ services:
     command: gunicorn staff_site.wsgi:application --bind 0.0.0.0:8008
     volumes:
       - ./staff_site/:/usr/src/app-staff/
-  #cronjobs:
-   # build: ./cronjob
-   # container_name: cronjobs
-   # volumes:
-    #  - ./staff_site/:/usr/src/app-staff/
+  cronjobs:
+    build: ./cronjob
+    container_name: cronjobs
+    volumes:
+      - ./staff_site/:/usr/src/app-staff/
 
