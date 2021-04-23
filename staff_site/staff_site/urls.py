@@ -13,9 +13,11 @@ Including another URLconf
 	1. Import the include() function: from django.urls import include, path
 	2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import get_user_model
 from django_otp.admin import OTPAdminSite
@@ -41,9 +43,25 @@ urlpatterns = [
 	path('', include('mainPage.urls')),
 	path('sales/', include('sales.urls')),
 	path('manufacturing/', include('manufacturing.urls')),
-	path('login/', auth_views.LoginView.as_view(template_name='mainPage/login.html',
-									authentication_form=SimpleOTPAuthenticationForm
-	                                            ), name='login'),
-	path('logout/', auth_views.LogoutView.as_view(template_name='mainPage/logout.html'), name='logout'),
-	# path('todo/', include('todo.urls', namespace="todo")),
-]
+	path('login/', auth_views.LoginView.as_view(
+		template_name='mainPage/login.html',),
+		#authentication_form=SimpleOTPAuthenticationForm),
+		name='login'),
+	path('password_reset/', auth_views.PasswordResetView.as_view(
+		template_name='registration/password_reset_form.html'
+	), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
+		template_name='registration/password_reset_done.html'
+    ), name='password_reset_done'),
+    path('reset/<uidb64>/<token>)/',
+        auth_views.PasswordResetConfirmView.as_view(
+	        template_name='registration/password_reset_confirm.html'
+        ), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
+		template_name='registration/password_reset_complete.html'
+    ), name='password_reset_complete'),
+	path('logout/', auth_views.LogoutView.as_view(
+		template_name='mainPage/logout.html'), name='logout'),
+	url(r'^newsletter/', include('newsletter.urls')),
+	re_path(r'^watchman/', include('watchman.urls')),
+	]
