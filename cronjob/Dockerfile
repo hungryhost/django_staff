@@ -1,8 +1,8 @@
-FROM ubuntu:latest
+FROM python:3.8.6
 WORKDIR /usr/src/app-staff
 RUN RUNLEVEL=1 apt-get update && apt-get -y install cron
-RUN echo exit 0 > /usr/sbin/policy-rc.d
 # Add crontab file in the cron directory
+RUN echo exit 0 > /usr/sbin/policy-rc.d
 ADD crontab_mailing /etc/cron.d/simple-cron
 
 # Add shell script and grant execution rights
