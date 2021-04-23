@@ -13,7 +13,7 @@ services:
       - ./staff_site/:/usr/src/app-staff/
   celery:
     container_name: cl01_staff
-    build: ./rentAccess
+    build: ./staff_site
     command: celery -A staff_site worker -l info --purge
     env_file:
       - ./staff_site/.env
@@ -21,7 +21,7 @@ services:
       - ./staff_site/:/usr/src/app-staff/
   celery-beat:
     container_name: cl01_beat_staff
-    build: ./rentAccess
+    build: ./staff_site
     command: celery -A staff_site beat -l info
     env_file:
       - ./staff_site/.env
