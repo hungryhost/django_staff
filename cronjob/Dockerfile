@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 WORKDIR /usr/src/app-staff
-RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
+# RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 # Install cron
 RUN apt-get update
