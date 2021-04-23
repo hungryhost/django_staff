@@ -19,7 +19,7 @@ FROM python:3.8.6
 RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 RUN RUNLEVEL=1 apt-get update && apt-get -y install cron vim
 # Add crontab file in the cron directory
-WORKDIR /usr/src/app-staff/cronjon
+WORKDIR /usr/src/app-staff/cronjob
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 COPY crontab /etc/cron.d/crontab
