@@ -39,10 +39,13 @@ RUN mkdir  ./logs/
 RUN chmod 755 -R /usr/src/app-staff/
 RUN chmod +rwx ./logs/
 # setup cron
+
+
+#CMD  ['python manage.py migrate --noinput']
+FROM ubuntu:latest
+WORKDIR /usr/src/app-staff
 COPY crontab_mailing /etc/cron.d/crontab
 RUN chmod 0644 /etc/cron.d/crontab
 RUN crontab /etc/cron.d/crontab
 RUN touch /var/log/cron.log
 CMD cron && tail -f /var/log/cron.log
-
-#CMD  ['python manage.py migrate --noinput']
