@@ -10,6 +10,8 @@ ENV PYTHONUNBUFFERED 1
 COPY requirements.txt .
 COPY crontab_mailing .
 COPY mailing.sh .
+RUN chmod +rwx mailing.sh
+RUN chmod +rwx crontab_mailing
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
 
 
