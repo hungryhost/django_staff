@@ -99,7 +99,9 @@ class LockDetailView(DetailView):
 	def get_context_data(self, **kwargs):
 		context = super(LockDetailView, self).get_context_data(**kwargs)
 		try:
-			manual = LockWithManuals.objects.get(lock_id=self.kwargs['pk'])
+			manual = LockWithManuals.objects.all().filter(
+			lock_id=self.object.id
+			).latest('uploaded_at')
 			context['manual_url'] = manual.manual.file.url
 		except Exception as e:
 			context['manual_url'] = "#"
@@ -204,12 +206,16 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 				lwm = LockWithManuals.objects.all().filter(
 					lock_id=self.object.id
 				).latest('uploaded_at')
-				lwm.manual = form.cleaned_data['manual']
-				lwm.save()
+				lwm.delete()
+				new_lwm = LockWithManuals(
+					manual=form.cleaned_data['manual'],
+					lock_id=self.object.id
+				)
+				new_lwm.save()
 			except Exception as e:
 				lwm = LockWithManuals(
 					manual=form.cleaned_data['manual'],
-					lock_id=self.kwargs['pk']
+					lock_id=self.object.id
 				)
 				lwm.save()
 			return self.form_valid(form)
