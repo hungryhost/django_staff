@@ -4,36 +4,39 @@
 
 {% block content %}
 
- <main role="main" class="container">
+    <main role="main" class="container">
+        <div style="margin-bottom: 10px">
+            <a href="{% url 'lr-main' %}" class="btn btn-primary" style="margin-bottom: 10px">Назад</a>
 
- <div class="jumbotron jumbotron-fluid">
-  <div class="container">
-    <h1 class="text-justify">Sales Department</h1>
-    <p class="lead">Вы находитесь на странице управления продажами замков.</p>
-  </div>
-</div>
-<div class="row"  >
-    <div class="col-sm-6" style="margin-top: 10px">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Мои заявки</h5>
-        <p class="card-text">Перейти к просмотру заявок, над которыми я работаю.</p>
-        <a href="#" class="btn btn-primary">Перейти</a>
-      </div>
-    </div>
-    </div>
-  <div class="col-sm-6" style="margin-top: 10px">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Все входящие заявки</h5>
-        <p class="card-text">
-           Входящие заявки на создание замков.
-        </p>
-        <a href="{% url 'sales-incoming' %}" class="btn btn-primary">Перейти</a>
-      </div>
-    </div>
-  </div>
+        </div>
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="text-justify">Sales Department</h1>
+                <p class="lead">Вы находитесь на странице управления продажами замков.</p>
+            </div>
+        </div>
+        <div class="row"  >
+            <div class="col-sm-6" style="margin-top: 10px">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Мои заявки</h5>
+                        <p class="card-text">Перейти к просмотру заявок, над которыми я работаю.</p>
+                        <a href="#" class="btn btn-primary disabled">Перейти</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" style="margin-top: 10px">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Все входящие заявки</h5>
+                        <p class="card-text">
+                            Входящие заявки на создание замков.
+                        </p>
+                        <a href="{% url 'sales-incoming' %}" class="btn btn-primary">Перейти</a>
+                    </div>
+                </div>
+            </div>
 
-</div>
- </main>
+        </div>
+    </main>
 {% endblock content %}
