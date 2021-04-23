@@ -41,7 +41,7 @@ RUN chmod +rwx ./logs/
 
 
 #CMD  ['python manage.py migrate --noinput']
-FROM ubuntu:latest
+
 WORKDIR /usr/src/app-staff
 RUN apt-get update && apt-get -y install cron
 
