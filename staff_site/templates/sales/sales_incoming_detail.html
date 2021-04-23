@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col col-sm-10" style="margin-top: 10px">
+                <a href="{% url 'sales-incoming' %}" class="col-md-8 col-lg-3 btn btn-primary" style="margin-bottom: 10px">
+                    Назад к списку заявок</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body" style="text-align: center">
+                Страница заявки с id: {{ incoming_message.id }}
+
+            </div>
+
+        </div>
+        {% if employee_email != "" %}
+            <div class="card" style="text-align: center; margin-top:10px">
+                Статус: {{ incoming_message.status }}
+                <br>
+                Внутренний статус: {{ incoming_message.internal_status }}
+                <br>
+                Sales представитель: {{ employee_name }}
+
+                {{ employee_email }}
+                <br>
+                Создано: {{ incoming_message.created_at }}
+                <br>
+                Изменено: {{ incoming_message.updated_at }}
+            </div>
+        {% else %}
+            <div class="alert alert-info" style="text-align: center; margin-top:10px">
+                Статус: {{ incoming_message.status }}
+                <br>
+                Внутренний статус: {{ incoming_message.internal_status }}
+                <br>
+                Создано: {{ incoming_message.created_at }}
+                <br>
+                Изменено: {{ incoming_message.updated_at }}
+            </div>
+        {% endif %}
+
+        <div class="row">
+
+            <div class="col" style="margin-top: 10px">
+                <a href="{% url 'sales-delete' incoming_message.id %}" class=" btn btn-danger" style="margin-bottom: 10px">
+                    Удалить заявку</a>
+            </div>
+        </div>
+        {% if incoming_message.internal_status == "IN_PROGRESS" %}
+            <div class="card" >
+            <div class="card-body" style="text-align: center">
+                Доступное количество замков: <b id="lock_count"></b>
+
+            </div>
+        {% endif %}
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <a class="list-group-item">
+                {{ lock_message_form.internal_status.label_tag }}
+                {% render_field  lock_message_form.internal_status class="form-control" onChange="form.submit();" id='internal_status'%}
+            </a>
+
+
+            <div class="row">
+
+                <div class="col" style="margin-top: 10px">
+
+                    <div class="list-group" style="text-align: center; font-size: small">
+                        <a class="list-group-item-heading list-group-item" style="text-align: center; font-size: medium">
+                            Информация о клиенте
+                        </a>
+                        <div class="list-group-item">
+
+                            {{ lock_message_form.email.label_tag }}
+                            <a href="mailto:{{ incoming_message.email }}" target="_blank"
+                               class="list-group-item">{{ incoming_message.email }}</a>
+                            {% render_field  lock_message_form.email class="form-control" %}
+
+
+                        </div>
+                        <div class="list-group-item">
+                            {{ lock_message_form.fio.label_tag }}
+                            {% render_field  lock_message_form.fio class="form-control" %}
+                        </div>
+                        <div class="list-group-item">
+
+                            {{ lock_message_form.phone.label_tag }}
+                            {% render_field  lock_message_form.phone class="form-control" %}
+
+                        </div>
+                        <div class="list-group-item">
+
+                            {{ lock_message_form.company.label_tag }}
+                            {% render_field  lock_message_form.company class="form-control" %}
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col" style="margin-top: 10px">
+                    <div class="list-group" style="text-align: center; font-size: small">
+                        <a class="list-group-item-heading list-group-item" style="text-align: center; font-size: medium">
+                            Параметры заказа от клиента
+                        </a>
+                        <div class="list-group-item">
+
+                            {{ lock_message_form.quantity.label_tag }}
+                            {% render_field  lock_message_form.quantity class="form-control" %}
+
+                        </div>
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading">Комментарий</a>
+                            <a class="list-group-item">{{ incoming_message.comment }}</a>
+                        </div>
+
+                        <a class="list-group-item">
+                            {{ lock_message_form.status.label_tag }}
+                            {% render_field  lock_message_form.status class="form-control"  onChange="form.submit();"%}
+                        </a>
+
+                        <a class="list-group-item" id='preferred_type'>
+                            {{ lock_message_form.preferred_type.label_tag }}
+                            {% render_field  lock_message_form.preferred_type class="form-control"  onChange="refresh()"%}
+                        </a>
+                        <a class="list-group-item">
+                            {{ lock_message_form.internal_comment.label_tag }}
+                            {% render_field  lock_message_form.internal_comment class="form-control" %}
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <a class="card" style="margin-top: 10px">
+                <button type="submit" class="btn btn-success">
+                    <span class="glyphicon glyphicon-search"></span> Применить
+                </button>
+            </a>
+        </form>
+
+    </div>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        function refresh() {
+            let lock_type = $('#id_preferred_type').val();
+            console.log(lock_type);
+            $.ajax({
+                url: '{% url "sales-ajax-lock-count" %}' + '?type=' + lock_type,
+
+                success: function(data) {
+                    console.log(data);
+                    $('#lock_count').html(data['count']);
+                },
+                complete: function() {
+                   setInterval(refresh, 300000);
+                    }
+            });
+        }
+        $( document ).ready(function () {
+            $('#lock_count').html('загружается')
+            let internal_status = $( "#internal_status" ).val()
+            if (internal_status === "IN_PROGRESS") {
+                refresh();
+            }
+        });
+    </script>
+{% endblock content %}
