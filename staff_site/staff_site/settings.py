@@ -46,7 +46,8 @@ else:
 	CACHE_TTL = 60 * 1
 	CACHES = {
 		'default': {
-			'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+			'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+			'LOCATION': 'cache:11211',
 		}
 	}
 	SESSION_CACHE_ALIAS = "default"
@@ -60,14 +61,20 @@ INSTALLED_APPS = [
 	'django.contrib.sites',
 	'django.contrib.admin',
 	'watchman',
+	'django_extensions',
+	'axes',
 	'backendIntegrations',
 	'encrypted_fields',
 	'crispy_forms',
 	'userAccount',
 	'manufacturing',
 	'django_filters',
+	'widget_tweaks',
 	'django_countries',
 	'storages',
+	'tinymce',
+	'sorl.thumbnail',
+    'newsletter',
 	'phone_field',
 	'timezone_field',
 	'corsheaders',
@@ -80,8 +87,12 @@ INSTALLED_APPS = [
 	'twoFactor',
 
 ]
+NEWSLETTER_RICHTEXT_WIDGET = "tinymce.widgets.TinyMCE"
+NEWSLETTER_EMAIL_DELAY = 5
+NEWSLETTER_BATCH_DELAY = 60
+NEWSLETTER_BATCH_SIZE = 100
 SETTINGS_PATH = os.path.normpath(os.path.dirname(__file__))
-
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 SITE_ID = 1
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
@@ -93,7 +104,15 @@ MIDDLEWARE = [
 	'django_otp.middleware.OTPMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'axes.middleware.AxesMiddleware',
 
+]
+AUTHENTICATION_BACKENDS = [
+    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesBackend',
+
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
 ]
 AUTH_USER_MODEL = 'userAccount.InternalUser'
 LOGIN_REDIRECT_URL = 'lr-main'
@@ -123,7 +142,8 @@ CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PP
 								   'PPLS', 'STLMT', ]
 
 # Databases
-if not DEBUG:
+USE_POSTGRES = env.bool("USE_POSTGRES", False)
+if USE_POSTGRES:
 	DATABASES = {
 		'default': {
 			'ENGINE': 'django.db.backends.postgresql',
@@ -198,11 +218,16 @@ if USE_S3:
 	# s3 static settings
 	AWS_LOCATION = 'static'
 	STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
-	STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+	STATICFILES_STORAGE = 'staff_site.storage_backends.StaticStorage'
+	AWS_S3_REGION_NAME = "eu-north-1"
+	AWS_S3_SIGNATURE_VERSION = "s3v4"
 	# s3 public media settings
 	PUBLIC_MEDIA_LOCATION = 'media'
 	MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-	DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+	DEFAULT_FILE_STORAGE = 'staff_site.storage_backends.PublicMediaStorage'
+	# s3 private media settings
+	PRIVATE_MEDIA_LOCATION = 'private'
+	PRIVATE_FILE_STORAGE = 'staff_site.storage_backends.PrivateMediaStorage'
 
 else:
 	STATIC_URL = '/static/'
@@ -214,6 +239,8 @@ else:
 STATICFILES_DIRS = [
 	root("static"),
 ]
+HASHID_FIELD_SALT = env.str('HASHID_FIELD_SALT')
+
 FIELD_ENCRYPTION_KEYS = env("LOCK_ENCRYPTION_KEYS").split(",")
 KEY_HASH = env.str('KEY_HASH')
 CARD_HASH = env.str('CARD_HASH')
@@ -247,5 +274,16 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-
+DEFAULT_FROM_EMAIL = 'LockAndRent Staff <noreply-staff@lockandrent.ru>'
 # TEMPLATE_PREVIEW_DIR = root('templates')
+
+# AXES CONFIG
+AXES_FAILURE_LIMIT = 7
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_COOLOFF_TIME = 24
+AXES_PROXY_COUNT = 1
+AXES_META_PRECEDENCE_ORDER = [
+   'HTTP_X_FORWARDED_FOR',
+   'REMOTE_ADDR',
+]
+WATCHMAN_AUTH_DECORATOR = 'django.contrib.admin.views.decorators.staff_member_required'
