@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 COPY requirements.txt .
-COPY crontab .
+COPY crontab_mailing .
 COPY mailing.sh .
 RUN apt-get update && apt-get -y install cron
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
@@ -39,7 +39,7 @@ RUN mkdir  ./logs/
 RUN chmod 755 -R /usr/src/app-staff/
 RUN chmod +rwx ./logs/
 # setup cron
-COPY crontab /etc/cron.d/crontab
+COPY crontab_mailing /etc/cron.d/crontab
 RUN chmod 0644 /etc/cron.d/crontab
 RUN crontab /etc/cron.d/crontab
 RUN touch /var/log/cron.log
