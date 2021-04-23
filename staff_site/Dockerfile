@@ -8,6 +8,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 COPY requirements.txt .
+
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
 
 # setup cron

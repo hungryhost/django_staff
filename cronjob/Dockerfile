@@ -1,10 +1,10 @@
 FROM ubuntu:latest
-WORKDIR /usr/src/app-staff
+WORKDIR /usr/src/cronjob
 # RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 # Install cron
-RUN apt-get update
-RUN apt-get install cron
+RUN RUNLEVEL=1 apt-get update
+RUN RUNLEVEL=1 apt-get install cron
 
 # Add crontab file in the cron directory
 ADD crontab /etc/cron.d/simple-cron
