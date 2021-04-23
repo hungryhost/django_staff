@@ -44,8 +44,8 @@ urlpatterns = [
 	path('sales/', include('sales.urls')),
 	path('manufacturing/', include('manufacturing.urls')),
 	path('login/', auth_views.LoginView.as_view(
-		template_name='mainPage/login.html',
-		authentication_form=SimpleOTPAuthenticationForm),
+		template_name='mainPage/login.html'),
+		#authentication_form=SimpleOTPAuthenticationForm),
 		name='login'),
 	path('password_reset/', auth_views.PasswordResetView.as_view(
 		template_name='registration/password_reset_form.html'

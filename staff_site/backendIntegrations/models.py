@@ -790,7 +790,7 @@ class RegisterLock(models.Model):
     ]
 
     id = models.BigAutoField('id', primary_key=True)
-    uuid = models.UUIDField('uuid', default=uuid.uuid4, unique=True, editable=True)
+    uuid = models.CharField(unique=True, max_length=32)
     hash_id = models.CharField('hash_id', max_length=256, unique=True, blank=True, editable=True)
     description = models.TextField('description', blank=True, max_length=200, default="")
     is_on = models.BooleanField('is_on', null=False, default=True)

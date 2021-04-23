@@ -2,6 +2,7 @@ import datetime
 import secrets
 from io import BytesIO
 
+import uuid
 from django.core.files import File
 
 from manufacturing.pdf_generator import PdfGenerator
@@ -34,6 +35,7 @@ def hash_lock_id(sender: RegisterLock.__class__, **kwargs):
     """Hashes uuid of lock just before saving it in database.
     """
     new_lock = kwargs['instance']
+    new_lock.uuid = uuid.uuid4()
     new_lock.hash_id = sha1(str(new_lock.uuid).encode('utf-8')).hexdigest()
 
 
