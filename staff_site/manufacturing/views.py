@@ -282,6 +282,13 @@ class LockDeleteView(LoginRequiredMixin, DeleteView):
 	template_name = 'manufacturing/registerlock_confirm_delete.html'
 	success_url = '/manufacturing/locks/'
 
+	def get_object(self, queryset=None):
+		try:
+			obj = RegisterLock.objects.get(pk=self.kwargs['pk'])
+			return obj
+		except RegisterLock.DoesNotExist:
+			raise Http404
+
 
 @login_required
 def refresh_user_docs(request, pk):
