@@ -2,8 +2,6 @@ FROM ubuntu:latest
 WORKDIR /usr/src/app-staff/crontab
 RUN RUNLEVEL=1 apt-get update && apt-get -y install cron
 RUN echo exit 0 > /usr/sbin/policy-rc.d
-FROM ubuntu:latest
-
 # Add crontab file in the cron directory
 ADD crontab_mailing /etc/cron.d/simple-cron
 
