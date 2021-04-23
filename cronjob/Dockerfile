@@ -11,7 +11,9 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r 
 #########
 
 # pull official base image
+
 FROM python:3.8.6
+WORKDIR /usr/src/app-staff
 RUN RUNLEVEL=1 apt-get update && apt-get -y install cron
 RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 # installing netcat (nc) since we are using that to listen to postgres server in entrypoint.sh
@@ -27,7 +29,7 @@ RUN pip install --no-cache /wheels/*
 
 
 # Add crontab file in the cron directory
-
+WORKDIR /usr/src/app-staff
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 ADD crontab_mailing /etc/cron.d/simple-cron
 
