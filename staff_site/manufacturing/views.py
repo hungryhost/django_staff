@@ -165,18 +165,30 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 
 	def get_context_data(self, **kwargs):
 		context = super(LockUpdateView, self).get_context_data(**kwargs)
-		lwm = LockWithManuals.objects.all().filter(
+		try:
+			lwm = LockWithManuals.objects.all().filter(
 			lock_id=self.object.id
-		).latest('uploaded_at')
-		form_final = LockUpdateManufacturingForm(
-			instance=self.object,
-			initial={
-				'manual': lwm.manual,
-				'description': self.object.description,
-				'current_stage': self.object.current_stage,
-				'current_type': self.object.current_type,
-				'is_approved': self.object.is_approved,
-			})
+			).latest('uploaded_at')
+			man = lwm.manual
+			form_final = LockUpdateManufacturingForm(
+				instance=self.object,
+				initial={
+					'manual': man,
+					'description': self.object.description,
+					'current_stage': self.object.current_stage,
+					'current_type': self.object.current_type,
+					'is_approved': self.object.is_approved,
+				})
+		except LockWithManuals.DoesNotExist:
+			form_final = LockUpdateManufacturingForm(
+				instance=self.object,
+				initial={
+					'description': self.object.description,
+					'current_stage': self.object.current_stage,
+					'current_type': self.object.current_type,
+					'is_approved': self.object.is_approved,
+				})
+
 		context['form'] = form_final
 
 		return context
