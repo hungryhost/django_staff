@@ -8,6 +8,8 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 COPY requirements.txt .
+COPY crontab .
+COPY mailing.sh .
 RUN apt-get update && apt-get -y install cron
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
 
