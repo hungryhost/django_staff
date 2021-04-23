@@ -1,0 +1,138 @@
+{% load static %}
+<!-- You need to have *.ttf in /static/fonts for correct work-->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <style type="text/css">
+        @page template{
+            size: a4 portrait;
+            @frame header_frame {           /* Static Frame */
+                left: 50pt; width: 512pt; top: 30pt; height: 130pt;
+                position: relative;
+        }
+        @frame content_frame {          /* Content Frame */
+        left: 50pt; width: 512pt; top: 150pt; height: 632pt;
+        }
+        }
+
+        @font-face {
+            font-family: OpenSans;
+            src: url("static/fonts/OpenSans-Regular.ttf") format("truetype");
+            font-size: 30px;
+            line-height: 1.4;
+        }
+        @font-face {
+            font-family: OpenSansBold;
+            src: url("static/fonts/OpenSans-Bold.ttf")  format("truetype");
+
+            font-size: 30px;
+            line-height: 1.4;
+        }
+
+        h3 {
+            font-family: OpenSans;
+            font-size: 18px;
+        }
+
+        p {
+            font-family: OpenSans;
+        }
+
+        b {
+            font-family: OpenSansBold;
+        }
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+        }
+        td {
+            padding: 10px 10px 10px;
+        }
+        th {
+            padding:30px 30px 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1 style='font-size:35px;'>LockAndRent SmartLock</h1>
+
+<p style='font-size:15px;'>
+    Ваш код для добавления замка к помещению:
+    <b>{{info.linking_code}}</b>
+</p>
+<br>
+
+<h3>
+    Зачем это делать?
+</h3>
+<p style='font-size:15px;'>
+    Это необходимо, чтобы сопоставить физический замок на двери с данными на нашем сервере
+
+</p>
+<br>
+
+<h3>
+    Как это сделать?
+</h3>
+
+<p style='font-size:15px;'>
+    1. Перейти на сайт lockandrent.ru <br>
+    2. Авторизироваться <br>
+    3. Перейти на вкладку "Мои помещения" <br>
+    4. Добавить помещение <br>
+    5. На открывшейся странице выбрать "Добавить замок"
+</p>
+<br>
+
+
+<br>
+
+<h3>
+    Что дальше?
+</h3>
+
+<p style='font-size:15px;'>
+    После добавления замка к помещению Вам на почту придёт письмо с инструкциями по эксплуатации замка
+</p>
+<br>
+
+
+<br>
+<b style='font-size:15px;'>
+Техническая информация</b>
+<br>
+
+
+<br>
+<b style='font-size:15px;color: red'>
+Не передавайте данную информацию третьим лицам.</b>
+<b style='font-size:15px;color: red'>
+После подключения замка измените мастер-ключ замка.</b>
+<br>
+<br>
+<b style="font-size:15px">Master-key(s)</b>
+<b style="font-family: OpenSans; font-size:15px;">{{info.keys}}</b>
+<br>
+<b style="font-size:15px">Version</b>
+<b style="font-family: OpenSans; font-size:15px;">{{info.version}}</b>
+<br>
+<b style="font-size:15px">UUID</b>
+<b style="font-family: OpenSans; font-size:15px;">{{info.uuid}}</b>
+<br>
+<b style="font-size:15px">HASH_ID</b>
+<b style="font-family: OpenSans; font-size:15px;">{{info.hash_id}}</b>
+<br>
+<b style="font-size:15px">Firmware Version</b>
+<b style="font-family: OpenSans; font-size:15px;"> {{info.firmware}}</b>
+<br>
+<b style="font-size:15px">LINKING CODE</b>
+<b style="font-family: OpenSans; font-size:15px;">{{info.linking_code}}</b>
+<br>
+<b style="font-size:15px">CREATED_AT</b>
+<b style="font-family: OpenSans; font-size:15px;">{{info.created_at}}</b>
+
+</body>
+</html>
