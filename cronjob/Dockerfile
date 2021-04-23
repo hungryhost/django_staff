@@ -26,23 +26,3 @@ RUN apt-get update && apt-get install -y --no-install-recommends netcat && \
 COPY --from=builder /usr/src/app-staff/wheels /wheels
 COPY --from=builder /usr/src/app-staff/requirements.txt .
 RUN pip install --no-cache /wheels/*
-RUN RUNLEVEL=1 apt-get update && apt-get -y install cron vim
-
-# Add crontab file in the cron directory
-WORKDIR /usr/src/app-staff
-RUN echo exit 0 > /usr/sbin/policy-rc.d
-COPY crontab /etc/cron.d/crontab
-
-# Add shell script and grant execution rights
-ADD mailing.sh /mailing.sh
-RUN chmod +x /mailing.sh
-
-# Give execution rights on the cron job
-RUN chmod 0644 /etc/cron.d/crontab
-
-# Create the log file to be able to run tail
-RUN touch /var/log/cron.log
-
-# Run the command on container startup
-RUN /usr/bin/crontab /etc/cron.d/crontab
-CMD ["cron", "-f"]
