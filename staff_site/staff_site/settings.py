@@ -251,20 +251,20 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
 
-# default_exchange = Exchange('default', type='direct')
-# priority_exchange = Exchange('priority_queue', type='direct')
+default_exchange = Exchange('django_staff_def', type='direct')
+priority_exchange = Exchange('priority_queue', type='direct')
 
-# CELERY_QUEUES = (
-#	Queue('default', default_exchange, routing_key='default', consumer_arguments={'x-priority': 0}),
-#	Queue('priority_queue', priority_exchange, routing_key='priority_queue', consumer_arguments={'x-priority': 10}),
-# )
-# CELERY_ROUTES = ({'jwtauth.tasks.test_task': {
-#						'queue': 'priority_queue',
-#						'routing_key': 'priority_queue'
-#				}}, )
-# CELERY_DEFAULT_QUEUE = 'default'
-# CELERY_DEFAULT_EXCHANGE = 'default'
-# CELERY_DEFAULT_ROUTING_KEY = 'default'
+CELERY_QUEUES = (
+	Queue('django_staff_def', default_exchange, routing_key='django_staff_def', consumer_arguments={'x-priority': 0}),
+	Queue('priority_queue', priority_exchange, routing_key='priority_queue', consumer_arguments={'x-priority': 10}),
+ )
+CELERY_ROUTES = ({'staff_site.tasks.send_submissions': {
+						'queue': 'django_staff_def',
+						'routing_key': 'django_staff_def'
+				}}, )
+CELERY_DEFAULT_QUEUE = 'django_staff_def'
+CELERY_DEFAULT_EXCHANGE = 'django_staff_def'
+CELERY_DEFAULT_ROUTING_KEY = 'django_staff_def'
 
 # EMAIL SETTINGS
 SERVER_EMAIL = 'server@lockandrent.ru'

@@ -11,13 +11,19 @@ services:
     command: gunicorn staff_site.wsgi:application --bind 0.0.0.0:8008
     volumes:
       - ./staff_site/:/usr/src/app-staff/
-      - bin:/usr/
-
-  cronjobs:
-   build: ./cronjob
-   container_name: cronjobs
-   volumes:
-     - ./staff_site/:/usr/src/app-staff/
-     - bin:/usr/
-volumes:
-  bin:
+  celery:
+    container_name: cl01_staff
+    build: ./rentAccess
+    command: celery -A staff_site worker -l info --purge
+    env_file:
+      - ./staff_site/.env
+    volumes:
+      - ./staff_site/:/usr/src/app-staff/
+  celery-beat:
+    container_name: cl01_beat_staff
+    build: ./rentAccess
+    command: celery -A staff_site beat -l info
+    env_file:
+      - ./staff_site/.env
+    volumes:
+      - ./staff_site/:/usr/src/app-staff/
