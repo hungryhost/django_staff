@@ -39,6 +39,7 @@ ADD . /usr/src/app-staff
 RUN mkdir  ./logs/
 RUN chmod 755 -R /usr/src/app-staff/
 RUN chmod +rwx ./logs/
+
 # setup cron
 FROM python:3.8.6
 RUN RUNLEVEL=1 apt-get update && apt-get -y install cron vim
