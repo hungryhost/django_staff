@@ -74,6 +74,31 @@ class Bookings(models.Model):
         db_table = 'bookings'
 
 
+class BookingsHistory(models.Model):
+    id = models.IntegerField()
+    booked_from = models.DateTimeField()
+    booked_until = models.DateTimeField()
+    price = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    client_email = models.CharField(max_length=254)
+    number_of_clients = models.IntegerField()
+    status = models.CharField(max_length=100)
+    is_deleted = models.BooleanField()
+    cancelled_reason = models.CharField(max_length=255)
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    booked_by_id = models.IntegerField(blank=True, null=True)
+    booked_property_id = models.IntegerField(blank=True, null=True)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'bookings_history'
+
+
 class CitiesLightCity(models.Model):
     name_ascii = models.CharField(max_length=200)
     slug = models.CharField(max_length=50)
@@ -256,16 +281,31 @@ class LockCatalogStorageAvailability(models.Model):
         db_table = 'lock_catalog_storage_availability'
 
 
+class LockInternalManufacturingRequests(models.Model):
+    version_lock = models.IntegerField()
+    quantity = models.IntegerField()
+    lock_message = models.ForeignKey('LockPurchaseRequests', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'lock_internal_manufacturing_requests'
+
+
 class LockPurchaseRequests(models.Model):
     email = models.CharField(max_length=255)
     fio = models.CharField(max_length=255)
     phone = models.CharField(max_length=31)
+    status = models.CharField(max_length=20)
     comment = models.CharField(max_length=500)
     company = models.CharField(max_length=255)
     quantity = models.IntegerField()
-    selected_lock = models.ForeignKey(LockCatalogInfo, models.DO_NOTHING, blank=True, null=True)
-    status = models.CharField(max_length=20)
     final_price = models.FloatField(blank=True, null=True)
+    selected_lock = models.ForeignKey(LockCatalogInfo, models.DO_NOTHING, blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    preferred_type = models.IntegerField()
+    internal_comment = models.TextField()
+    internal_status = models.CharField(max_length=255)
 
     class Meta:
         managed = False
@@ -335,6 +375,30 @@ class OrganisationAddresses(models.Model):
         db_table = 'organisation_addresses'
 
 
+class OrganisationAddressesHistory(models.Model):
+    id = models.IntegerField()
+    country = models.CharField(max_length=2)
+    city = models.CharField(max_length=255)
+    street = models.CharField(max_length=255)
+    building = models.CharField(max_length=20)
+    floor = models.CharField(max_length=20)
+    number = models.CharField(max_length=30)
+    zip_code = models.CharField(max_length=10)
+    crm_region = models.CharField(db_column='CRM_REGION', max_length=3)  # Field name made lowercase.
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    organisation_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organisation_addresses_history'
+
+
 class OrganisationApiKeys(models.Model):
     id = models.CharField(primary_key=True, max_length=100)
     prefix = models.CharField(unique=True, max_length=8)
@@ -399,6 +463,34 @@ class OrganisationMembers(models.Model):
         unique_together = (('organisation', 'user'),)
 
 
+class OrganisationMembersHistory(models.Model):
+    id = models.IntegerField()
+    is_creator = models.BooleanField()
+    can_add_properties = models.BooleanField()
+    can_delete_properties = models.BooleanField()
+    can_book_properties = models.BooleanField()
+    recursive_ownership = models.BooleanField()
+    can_add_members = models.BooleanField()
+    can_remove_members = models.BooleanField()
+    can_manage_members = models.BooleanField()
+    joined_with_code = models.BooleanField()
+    joined_with_link = models.BooleanField()
+    added_by_user_id = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    organisation_id = models.IntegerField(blank=True, null=True)
+    user_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organisation_members_history'
+
+
 class OrganisationProperties(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
@@ -410,6 +502,24 @@ class OrganisationProperties(models.Model):
         managed = False
         db_table = 'organisation_properties'
         unique_together = (('premises', 'organisation'),)
+
+
+class OrganisationPropertiesHistory(models.Model):
+    id = models.IntegerField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    added_by_id = models.IntegerField(blank=True, null=True)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    organisation_id = models.IntegerField(blank=True, null=True)
+    premises_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organisation_properties_history'
 
 
 class Organisations(models.Model):
@@ -425,6 +535,27 @@ class Organisations(models.Model):
     class Meta:
         managed = False
         db_table = 'organisations'
+
+
+class OrganisationsHistory(models.Model):
+    id = models.IntegerField()
+    name = models.CharField(max_length=255)
+    website = models.CharField(max_length=255)
+    description = models.CharField(max_length=500)
+    is_confirmed = models.BooleanField()
+    active = models.BooleanField()
+    lr_crm_id = models.TextField(db_column='LR_CRM_ID')  # Field name made lowercase.
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organisations_history'
 
 
 class Properties(models.Model):
@@ -443,6 +574,30 @@ class Properties(models.Model):
     class Meta:
         managed = False
         db_table = 'properties'
+
+
+class PropertiesHistory(models.Model):
+    id = models.IntegerField()
+    title = models.CharField(max_length=50)
+    body = models.TextField()
+    price = models.PositiveIntegerField(blank=True, null=True)
+    visibility = models.IntegerField()
+    active = models.BooleanField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    client_greeting_message = models.CharField(max_length=500)
+    requires_additional_confirmation = models.BooleanField()
+    booking_type = models.IntegerField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    property_type_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'properties_history'
 
 
 class PropertiesPropertylog(models.Model):
@@ -475,6 +630,30 @@ class PropertyAddress(models.Model):
         db_table = 'property_address'
 
 
+class PropertyAddressHistory(models.Model):
+    id = models.IntegerField()
+    country = models.CharField(max_length=100)
+    street = models.CharField(max_length=255)
+    building = models.CharField(max_length=20)
+    floor = models.CharField(max_length=20)
+    number = models.CharField(max_length=30)
+    zip_code = models.CharField(max_length=10)
+    directions_description = models.CharField(max_length=500)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    city_id = models.CharField(max_length=255, blank=True, null=True)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    premises_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_address_history'
+
+
 class PropertyAvailability(models.Model):
     open_days = models.CharField(max_length=7)
     booking_interval = models.IntegerField()
@@ -503,6 +682,46 @@ class PropertyAvailabilityExceptions(models.Model):
         db_table = 'property_availability_exceptions'
 
 
+class PropertyAvailabilityExceptionsHistory(models.Model):
+    id = models.IntegerField()
+    exception_datetime_start = models.DateTimeField()
+    exception_datetime_end = models.DateTimeField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    parent_availability_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_availability_exceptions_history'
+
+
+class PropertyAvailabilityHistory(models.Model):
+    id = models.IntegerField()
+    open_days = models.CharField(max_length=7)
+    booking_interval = models.IntegerField()
+    maximum_number_of_clients = models.IntegerField()
+    available_from = models.TimeField(blank=True, null=True)
+    available_until = models.TimeField(blank=True, null=True)
+    available_hours = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    premises_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_availability_history'
+
+
 class PropertyGroupMembers(models.Model):
     is_creator = models.BooleanField()
     can_add_properties = models.BooleanField()
@@ -529,6 +748,37 @@ class PropertyGroupMembers(models.Model):
         unique_together = (('user', 'group'),)
 
 
+class PropertyGroupMembersHistory(models.Model):
+    id = models.IntegerField()
+    is_creator = models.BooleanField()
+    can_add_properties = models.BooleanField()
+    can_delete_properties = models.BooleanField()
+    can_book_properties = models.BooleanField()
+    recursive_ownership = models.BooleanField()
+    can_add_members = models.BooleanField()
+    can_remove_members = models.BooleanField()
+    can_manage_members = models.BooleanField()
+    can_update_info = models.BooleanField()
+    can_delete_group = models.BooleanField()
+    joined_with_code = models.BooleanField()
+    joined_with_link = models.BooleanField()
+    added_by_user_id = models.IntegerField(blank=True, null=True)
+    added_by_owner_id = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    group_id = models.IntegerField(blank=True, null=True)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    user_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_group_members_history'
+
+
 class PropertyGroupProperties(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
@@ -539,6 +789,24 @@ class PropertyGroupProperties(models.Model):
     class Meta:
         managed = False
         db_table = 'property_group_properties'
+
+
+class PropertyGroupPropertiesHistory(models.Model):
+    id = models.IntegerField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    added_by_id = models.IntegerField(blank=True, null=True)
+    group_id = models.IntegerField(blank=True, null=True)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    premises_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_group_properties_history'
 
 
 class PropertyGroups(models.Model):
@@ -552,6 +820,23 @@ class PropertyGroups(models.Model):
         db_table = 'property_groups'
 
 
+class PropertyGroupsHistory(models.Model):
+    id = models.IntegerField()
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_groups_history'
+
+
 class PropertyImages(models.Model):
     image = models.CharField(max_length=100, blank=True, null=True)
     uploaded_at = models.DateTimeField()
@@ -563,17 +848,53 @@ class PropertyImages(models.Model):
         db_table = 'property_images'
 
 
+class PropertyImagesHistory(models.Model):
+    id = models.IntegerField()
+    image = models.TextField(blank=True, null=True)
+    uploaded_at = models.DateTimeField()
+    is_main = models.BooleanField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    premises_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_images_history'
+
+
 class PropertyLocks(models.Model):
-    description = models.CharField(max_length=200)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     lock = models.ForeignKey('RegisterLock', models.DO_NOTHING)
     property = models.ForeignKey(Properties, models.DO_NOTHING)
     added_by = models.ForeignKey('Users', models.DO_NOTHING)
+    description = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'property_locks'
+
+
+class PropertyLocksHistory(models.Model):
+    id = models.IntegerField()
+    description = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    added_by_id = models.IntegerField(blank=True, null=True)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    lock_id = models.CharField(max_length=32, blank=True, null=True)
+    property_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_locks_history'
 
 
 class PropertyOwnership(models.Model):
@@ -603,6 +924,41 @@ class PropertyOwnership(models.Model):
     class Meta:
         managed = False
         db_table = 'property_ownership'
+
+
+class PropertyOwnershipHistory(models.Model):
+    id = models.IntegerField()
+    visibility = models.IntegerField()
+    is_creator = models.BooleanField()
+    is_super_owner = models.BooleanField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    can_edit = models.BooleanField()
+    can_delete = models.BooleanField()
+    can_add_images = models.BooleanField()
+    can_delete_images = models.BooleanField()
+    can_add_bookings = models.BooleanField()
+    can_manage_bookings = models.BooleanField()
+    can_add_owners = models.BooleanField()
+    can_manage_owners = models.BooleanField()
+    can_delete_owners = models.BooleanField()
+    can_add_locks = models.BooleanField()
+    can_manage_locks = models.BooleanField()
+    can_delete_locks = models.BooleanField()
+    can_add_to_group = models.BooleanField()
+    can_add_to_organisation = models.BooleanField()
+    history_id = models.CharField(primary_key=True, max_length=32)
+    history_date = models.DateTimeField()
+    history_change_reason = models.CharField(max_length=100, blank=True, null=True)
+    history_type = models.CharField(max_length=1)
+    history_user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    permission_level_id = models.IntegerField(blank=True, null=True)
+    premises_id = models.IntegerField(blank=True, null=True)
+    user_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'property_ownership_history'
 
 
 class PropertyPermissionLevels(models.Model):
@@ -639,16 +995,17 @@ class RegisterCard(models.Model):
 
 
 class RegisterKey(models.Model):
+    field_code_data = models.BinaryField(db_column='_code_data')  # Field renamed because it started with '_'.
+    code = models.CharField(max_length=66, blank=True, null=True)
+    code_secure = models.TextField()
     hash_code = models.CharField(max_length=256)
     access_start = models.DateTimeField()
     access_stop = models.DateTimeField()
-    lock = models.ForeignKey('RegisterLock', models.DO_NOTHING)
-    code_secure = models.TextField()
+    created_manually = models.BooleanField()
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
-    created_manually = models.BooleanField()
-    field_code_data = models.BinaryField(db_column='_code_data')  # Field renamed because it started with '_'.
-    code = models.CharField(max_length=66, blank=True, null=True)
+    lock = models.ForeignKey('RegisterLock', models.DO_NOTHING)
+    is_master = models.BooleanField()
 
     class Meta:
         managed = False
@@ -657,14 +1014,18 @@ class RegisterKey(models.Model):
 
 class RegisterLock(models.Model):
     uuid = models.CharField(unique=True, max_length=32)
+    hash_id = models.CharField(unique=True, max_length=256)
     description = models.TextField()
     is_on = models.BooleanField()
     is_approved = models.BooleanField()
     last_echo = models.DateTimeField()
+    version = models.IntegerField()
     firmware = models.IntegerField()
     linking_code = models.TextField(unique=True, blank=True, null=True)
-    version = models.IntegerField()
-    hash_id = models.CharField(unique=True, max_length=256)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    current_type = models.IntegerField()
+    current_stage = models.IntegerField()
 
     class Meta:
         managed = False
@@ -678,6 +1039,39 @@ class RegisterLockIpAddresses(models.Model):
     class Meta:
         managed = False
         db_table = 'register_lock_ip_addresses'
+
+
+class RegisterLocksManuals(models.Model):
+    file = models.CharField(max_length=100, blank=True, null=True)
+    filename = models.CharField(max_length=255)
+    is_deleted = models.BooleanField()
+    uploaded_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'register_locks_manuals'
+
+
+class RegisterLocksUserFiles(models.Model):
+    file = models.CharField(max_length=100, blank=True, null=True)
+    filename = models.CharField(max_length=255)
+    is_deleted = models.BooleanField()
+    uploaded_at = models.DateTimeField()
+    lock = models.ForeignKey(RegisterLock, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'register_locks_user_files'
+
+
+class RegisterLocksWithManuals(models.Model):
+    uploaded_at = models.DateTimeField()
+    lock = models.ForeignKey(RegisterLock, models.DO_NOTHING)
+    manual = models.ForeignKey(RegisterLocksManuals, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'register_locks_with_manuals'
 
 
 class RestFrameworkApiKeyApikey(models.Model):
@@ -873,85 +1267,3 @@ class UserTripProperties(models.Model):
     class Meta:
         managed = False
         db_table = 'user_trip_properties'
-
-
-class UserTrips(models.Model):
-    title = models.CharField(max_length=50)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'user_trips'
-
-
-class Users(models.Model):
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.BooleanField()
-    email = models.CharField(unique=True, max_length=64)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    middle_name = models.CharField(max_length=50)
-    bio = models.CharField(max_length=500)
-    dob = models.DateField(blank=True, null=True)
-    gender = models.CharField(max_length=1)
-    timezone = models.CharField(max_length=63)
-    is_active = models.BooleanField()
-    is_staff = models.BooleanField()
-    is_admin = models.BooleanField()
-    two_factor_auth = models.BooleanField()
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    email_confirmed = models.BooleanField()
-    additional_info = models.CharField(max_length=1024)
-    client_rating = models.CharField(max_length=15)
-    is_banned = models.BooleanField()
-    last_password_update = models.DateTimeField()
-    phone_confirmed = models.BooleanField()
-    tos_version = models.CharField(max_length=20, blank=True, null=True)
-    phone = models.CharField(max_length=31)
-    use_work_email_incbookings = models.BooleanField()
-    use_work_email_outbookings = models.BooleanField()
-    work_email = models.CharField(unique=True, max_length=64, blank=True, null=True)
-    show_main_email_in_contact_info = models.BooleanField()
-    show_work_email_in_contact_info = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'users'
-
-
-class UsersBannedInfo(models.Model):
-    reason = models.CharField(max_length=500)
-    employee_id = models.IntegerField()
-    expiration = models.DateTimeField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    banned_user = models.ForeignKey(Users, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'users_banned_info'
-
-
-class UsersGroups(models.Model):
-    customuser = models.ForeignKey(Users, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'users_groups'
-        unique_together = (('customuser', 'group'),)
-
-
-class UsersUserPermissions(models.Model):
-    customuser = models.ForeignKey(Users, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'users_user_permissions'
-        unique_together = (('customuser', 'permission'),)
