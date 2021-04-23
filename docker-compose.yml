@@ -21,4 +21,4 @@ services:
      - bin:/usr/local/bin/
 
 volumes:
-  - bin
+  - bin:
