@@ -204,11 +204,11 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 				lwm = LockWithManuals.objects.all().filter(
 					lock_id=self.object.id
 				).latest('uploaded_at')
-				lwm.manual = form['manual']
+				lwm.manual_id = form['manual']
 				lwm.save()
 			except Exception as e:
 				lwm = LockWithManuals(
-					manual=form['manual'],
+					manual_id=form['manual'],
 					lock_id=self.kwargs['pk']
 				)
 				lwm.save()
