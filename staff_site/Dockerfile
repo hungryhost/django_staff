@@ -11,7 +11,7 @@ COPY requirements.txt .
 COPY crontab .
 COPY mailing.sh .
 RUN chmod +rwx mailing.sh
-RUN chmod +rwx crontab_mailing
+RUN chmod +rwx crontab
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
 
 
