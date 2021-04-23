@@ -20,3 +20,5 @@ services:
      - ./staff_site/:/usr/src/app-staff/
      - bin:/usr/local/bin/
 
+volumes:
+  - bin
