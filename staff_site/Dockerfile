@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 COPY requirements.txt .
-COPY crontab_mailing .
+COPY crontab .
 COPY mailing.sh .
 RUN chmod +rwx mailing.sh
 RUN chmod +rwx crontab_mailing

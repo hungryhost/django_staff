@@ -14,7 +14,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r 
 
 FROM python:3.8.6
 WORKDIR /usr/src/app-staff
-RUN RUNLEVEL=1 apt-get update && apt-get -y install cron
+
 RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 # installing netcat (nc) since we are using that to listen to postgres server in entrypoint.sh
 RUN apt-get update && apt-get install -y --no-install-recommends netcat && \
@@ -26,22 +26,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends netcat && \
 COPY --from=builder /usr/src/app-staff/wheels /wheels
 COPY --from=builder /usr/src/app-staff/requirements.txt .
 RUN pip install --no-cache /wheels/*
-
+RUN RUNLEVEL=1 apt-get update && apt-get -y install cron vim
 
 # Add crontab file in the cron directory
 WORKDIR /usr/src/app-staff
 RUN echo exit 0 > /usr/sbin/policy-rc.d
-ADD crontab_mailing /etc/cron.d/simple-cron
+COPY crontab /etc/cron.d/crontab
 
 # Add shell script and grant execution rights
 ADD mailing.sh /mailing.sh
 RUN chmod +x /mailing.sh
 
 # Give execution rights on the cron job
-RUN chmod 0644 /etc/cron.d/simple-cron
+RUN chmod 0644 /etc/cron.d/crontab
 
 # Create the log file to be able to run tail
 RUN touch /var/log/cron.log
 
 # Run the command on container startup
 CMD cron && tail -f /var/log/cron.log
+CMD ["cron", "-f"]
