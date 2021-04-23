@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 COPY requirements.txt .
-
+RUN apt-get update && apt-get -y install cron
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r requirements.txt
 
 
@@ -32,13 +32,15 @@ RUN pip install --no-cache /wheels/*
 
 # set work directory
 WORKDIR /usr/src/app-staff
-
-ADD . /usr/src/app-locks
-COPY entrypoint.sh /usr/src/app-staff/entrypoint.sh
+ADD . /usr/src/app-staff
 RUN mkdir  ./logs/
 RUN chmod 755 -R /usr/src/app-staff/
-RUN chmod +x /usr/src/app-staff/entrypoint.sh
 RUN chmod +rwx ./logs/
-# run entrypoint.sh
+# setup cron
+COPY crontab /etc/cron.d/crontab
+RUN chmod 0644 /etc/cron.d/crontab
+RUN crontab /etc/cron.d/crontab
+RUN touch /var/log/cron.log
+CMD cron && tail -f /var/log/cron.log
 
 CMD  ['python manage.py migrate --noinput']
