@@ -1,12 +1,21 @@
-FROM ubuntu:latest as mailer
-WORKDIR /usr/src/app-staff
-RUN echo exit 0 > /usr/sbin/policy-rc.d
+FROM ubuntu:latest
+WORKDIR /usr/src/app-staff/crontab
 RUN RUNLEVEL=1 apt-get update && apt-get -y install cron
-RUN chmod 0644 /etc/cron.d/crontab
-COPY crontab_mailing /etc/cron.d/crontab
-COPY mailing.sh .
-RUN chmod +rwx mailing.sh
-RUN chmod +rwx crontab_mailing
-RUN RUNLEVEL=1 crontab /etc/cron.d/crontab
-RUN RUNLEVEL=1 touch /var/log/cron.log
+RUN echo exit 0 > /usr/sbin/policy-rc.d
+FROM ubuntu:latest
+
+# Add crontab file in the cron directory
+ADD crontab_mailing /etc/cron.d/simple-cron
+
+# Add shell script and grant execution rights
+ADD mailing.sh /mailing.sh
+RUN chmod +x /mailing.sh
+
+# Give execution rights on the cron job
+RUN chmod 0644 /etc/cron.d/simple-cron
+
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
+
+# Run the command on container startup
 CMD cron && tail -f /var/log/cron.log
