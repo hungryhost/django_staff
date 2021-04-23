@@ -3,28 +3,22 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import ReadOnlyPasswordHashField, UserCreationForm
 # Register your models here.
 from .models import InternalUser
 
 
-class UserCreationForm(forms.ModelForm):
+class MyForm(UserCreationForm):
 	"""A form for creating new users. Includes all the required
 	fields, plus a repeated password."""
 	password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
 	password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+	email = forms.EmailField(label='Internal Email', widget=forms.EmailInput)
 
 	class Meta:
 		model = InternalUser
 		fields = (
-			'email',
-			'first_name',
-			'last_name',
-			'middle_name',
-			'bio',
-			'is_confirmed',
-			'dob',
-			'gender'
+			'__all__'
 		)
 
 	def clean_password2(self):
@@ -54,18 +48,19 @@ class UserChangeForm(forms.ModelForm):
 	class Meta:
 		model = InternalUser
 		fields = (
-			'email',
 			'first_name',
 			'last_name',
 			'middle_name',
+			'phone',
 			'bio',
-			'is_confirmed',
 			'dob',
 			'gender',
+			'timezone',
 			'is_active',
 			'is_admin',
 			'is_staff',
-			'is_superuser'
+			'is_superuser',
+
 		)
 
 	def clean_password(self):
@@ -78,18 +73,50 @@ class UserChangeForm(forms.ModelForm):
 class UserAdmin(BaseUserAdmin):
 	# The forms to add and change user instances
 	form = UserChangeForm
-	add_form = UserCreationForm
+	add_form = MyForm
 
 	# The fields to be used in displaying the User model.
 	# These override the definitions on the base UserAdmin
 	# that reference specific fields on auth.User.
-	list_display = ('email', 'first_name', 'is_admin')
-	list_filter = ('is_admin',)
+	list_display = (
+		'email',
+		'first_name',
+		'last_name',
+		'is_admin',
+		'is_staff',
+	)
+	readonly_fields = [
+		'unique_user_token',
+	]
+	list_filter = ('is_admin','groups')
 	fieldsets = (
-		(None, {'fields': ('email', 'password')}),
-		('Personal info', {'fields': ('first_name', 'last_name')}),
+		(None, {
+			'fields': (
+				'email',
+				'password'
+			)
+		}),
+		('Personal info', {
+			'fields': (
+				'first_name',
+				'last_name',
+				'middle_name',
+				'phone',
+				'bio',
+				'dob',
+				'gender',
+				'timezone',
+				'unique_user_token',
+			)
+		}),
 		('Permissions', {
-			'fields': ('is_active', 'is_staff', 'is_superuser', 'is_admin', 'groups', 'user_permissions'),
+			'fields': (
+				'is_active',
+				'is_staff',
+				'is_superuser',
+				'is_admin',
+				'groups',
+				'user_permissions'),
 		}),
 	)
 	# add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
