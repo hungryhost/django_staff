@@ -616,7 +616,7 @@ class PropertyLocks(models.Model):
     description = models.CharField(max_length=200)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
-    lock = models.ForeignKey('RegisterLock', models.CASCADE)
+    lock = models.ForeignKey('RegisterLock', to_field='id', on_delete=models.CASCADE)
     property = models.ForeignKey(Properties, models.CASCADE)
     added_by = models.ForeignKey('Users', models.CASCADE)
 
