@@ -5,6 +5,7 @@ from django.conf import settings
 # Create your models here.
 import os
 from uuid import uuid4
+from hashid_field import HashidField
 
 
 class UserModelManager(BaseUserManager):
@@ -99,7 +100,7 @@ class InternalUser(AbstractBaseUser, PermissionsMixin):
 
 	middle_name = models.CharField('middle_name', null=False, blank=True, max_length=50)
 	bio = models.CharField('bio', null=False, blank=True, max_length=500, default="")
-
+	phone = models.CharField('phone', null=False, blank=True, max_length=100, default="")
 	is_confirmed = models.BooleanField('is_confirmed', default=False)
 	dob = models.DateField('dob', null=False, blank=True, default="1970-01-01")
 	gender = models.CharField('gender', max_length=1, choices=GENDER_CHOICES, null=False,
@@ -115,7 +116,7 @@ class InternalUser(AbstractBaseUser, PermissionsMixin):
 	EMAIL_FIELD = 'email'
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = ['first_name', 'last_name']
-
+	unique_user_token = HashidField(min_length=50, null=True)
 	objects = UserModelManager()
 
 	@property
@@ -140,12 +141,6 @@ class InternalUser(AbstractBaseUser, PermissionsMixin):
 		"""Constructs user's short name (without patronymic).
 		"""
 		return f'{self.last_name} {self.first_name}'
-
-	def has_module_perms(self, app_label):
-		return self.is_admin
-
-	def has_perm(self, perm, obj=None):
-		return self.is_admin
 
 	def __str__(self):
 		return "{}".format(self.email)
