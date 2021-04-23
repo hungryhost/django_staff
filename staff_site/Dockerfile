@@ -43,4 +43,4 @@ RUN crontab /etc/cron.d/crontab
 RUN touch /var/log/cron.log
 CMD cron && tail -f /var/log/cron.log
 
-CMD  ['python manage.py migrate --noinput']
+#CMD  ['python manage.py migrate --noinput']
