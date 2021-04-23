@@ -50,11 +50,19 @@ def create_linking_code(sender: InternalUser.__class__, instance, created, **kwa
         img = io.BytesIO()
         qr.make_image().save(img, 'PNG')
         img.seek(0)
-        filename = 'qrcode-code1.png'
-        message = "Вопспользуйтесь Google Authenticator для получения доступа к " \
-                  "аккаунту."
-        subject = "2FA"
-        send_from = "INTERNAL SECURITY <internal_security@lockandrent.ru>"
+        filename = 'google-auth-qr.png'
+        message = "Воспользуйтесь Google Authenticator для получения доступа к " \
+                  "аккаунту. Это автоматическое сообщение, не отвечайте на него. При возникновении" \
+                  " вопросов обратитесь к вашему администратору."
+        subject = "Важно! Google Authenticator 2FA"
+        send_from = "LockandRent Staff Security <noreply-staff-security@lockandrent.ru>"
         mail = EmailMessage(subject=subject, body=message, from_email=send_from, to=[instance.email])
         mail.attach(filename, img.getvalue(), 'image/png')
         mail.send()
+
+
+@receiver(post_save, sender=InternalUser, weak=False)
+def create_token(sender: InternalUser.__class__, instance, created, **kwargs):
+    if created:
+        instance.unique_user_token = instance.id
+        instance.save()
