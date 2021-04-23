@@ -1,4 +1,5 @@
 FROM python:3.8.6 as builder
+RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 WORKDIR /usr/src/app-staff
 COPY requirements.txt .
 
@@ -11,7 +12,8 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app-staff/wheels -r 
 
 # pull official base image
 FROM python:3.8.6
-
+RUN RUNLEVEL=1 apt-get update && apt-get -y install cron
+RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 # installing netcat (nc) since we are using that to listen to postgres server in entrypoint.sh
 RUN apt-get update && apt-get install -y --no-install-recommends netcat && \
     apt-get autoremove -y && \
@@ -23,8 +25,9 @@ COPY --from=builder /usr/src/app-staff/wheels /wheels
 COPY --from=builder /usr/src/app-staff/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
-RUN RUNLEVEL=1 apt-get update && apt-get -y install cron
+
 # Add crontab file in the cron directory
+
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 ADD crontab_mailing /etc/cron.d/simple-cron
 
