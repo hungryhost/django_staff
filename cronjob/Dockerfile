@@ -10,7 +10,7 @@ RUN RUNLEVEL=1 apt-get install cron
 ADD crontab /etc/cron.d/simple-cron
 
 # Add shell script and grant execution rights
-ADD mailing.sh /mailing.sh
+COPY mailing.sh .
 RUN chmod +x /mailing.sh
 
 # Give execution rights on the cron job
