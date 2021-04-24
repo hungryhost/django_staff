@@ -212,13 +212,14 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 					lock_id=self.kwargs['pk']
 				)
 				new_lwm.save()
+				return self.form_valid(form)
 			except Exception as e:
 				lwm = LockWithManuals(
 					manual=form.cleaned_data['manual'],
 					lock_id=self.kwargs['pk']
 				)
 				lwm.save()
-			return self.form_valid(form)
+				return self.form_valid(form)
 		else:
 			return self.form_invalid(form)
 
