@@ -287,6 +287,7 @@ AXES_COOLOFF_TIME = 24
 AXES_PROXY_COUNT = 1
 AXES_META_PRECEDENCE_ORDER = [
    'HTTP_X_FORWARDED_FOR',
+	'X_FORWARDED_FOR',
    'REMOTE_ADDR',
 ]
 WATCHMAN_AUTH_DECORATOR = 'django.contrib.admin.views.decorators.staff_member_required'
