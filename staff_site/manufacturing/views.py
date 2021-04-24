@@ -195,33 +195,6 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 
 		return context
 
-	def post(self, request, *args, **kwargs):
-		"""
-		Handle POST requests: instantiate a form instance with the passed
-		POST variables and then check if it's valid.
-		"""
-		form = self.get_form()
-		if form.is_valid():
-			try:
-				lwm = LockWithManuals.objects.all().filter(
-					lock_id=self.kwargs['pk']
-				).latest('uploaded_at')
-				lwm.delete()
-				new_lwm = LockWithManuals(
-					manual=form.cleaned_data['manual'],
-					lock_id=self.kwargs['pk']
-				)
-				new_lwm.save()
-				return self.form_valid(form)
-			except Exception as e:
-				lwm = LockWithManuals(
-					manual=form.cleaned_data['manual'],
-					lock_id=self.kwargs['pk']
-				)
-				lwm.save()
-				return self.form_valid(form)
-		else:
-			return self.form_invalid(form)
 
 @login_required
 def key_create(request, pk):
