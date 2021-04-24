@@ -166,7 +166,7 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 	template_name = 'manufacturing/lock_update.html'
 
 	def form_valid(self, form):
-		form.instance.manual, created = LockWithManuals.objects.get_or_create(
+		form.instance.manual, created = LockWithManuals.objects.update_or_create(
 			manual=form.cleaned_data['manual'],
 			lock_id=self.object.id
 		)
