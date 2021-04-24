@@ -165,6 +165,13 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 	form_class = LockUpdateManufacturingForm
 	template_name = 'manufacturing/lock_update.html'
 
+	def form_valid(self, form):
+		form.instance.manual, created = LockWithManuals.objects.get_or_create(
+			manual=form.cleaned_data['manual'],
+			lock_id=self.object.id
+		)
+		return super().form_valid(form)
+
 	def get_context_data(self, **kwargs):
 		context = super(LockUpdateView, self).get_context_data(**kwargs)
 		try:
