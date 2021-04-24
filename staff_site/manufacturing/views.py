@@ -204,18 +204,18 @@ class LockUpdateView(LoginRequiredMixin, UpdateView):
 		if form.is_valid():
 			try:
 				lwm = LockWithManuals.objects.all().filter(
-					lock_id=self.object.id
+					lock_id=self.kwargs['pk']
 				).latest('uploaded_at')
 				lwm.delete()
 				new_lwm = LockWithManuals(
 					manual=form.cleaned_data['manual'],
-					lock_id=self.object.id
+					lock_id=self.kwargs['pk']
 				)
 				new_lwm.save()
 			except Exception as e:
 				lwm = LockWithManuals(
 					manual=form.cleaned_data['manual'],
-					lock_id=self.object.id
+					lock_id=self.kwargs['pk']
 				)
 				lwm.save()
 			return self.form_valid(form)
