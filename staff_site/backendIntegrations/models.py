@@ -517,7 +517,7 @@ class PropertyAddress(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     city = models.ForeignKey('SupportedCities', models.DO_NOTHING)
-    premises = models.OneToOneField(Properties, models.DO_NOTHING)
+    premises = models.OneToOneField(Properties, models.CASCADE)
 
     class Meta:
         managed = False
@@ -533,7 +533,7 @@ class PropertyAvailability(models.Model):
     available_hours = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
-    premises = models.OneToOneField(Properties, models.DO_NOTHING)
+    premises = models.OneToOneField(Properties, models.CASCADE)
 
     class Meta:
         managed = False
@@ -631,7 +631,7 @@ class PropertyOwnership(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     permission_level = models.ForeignKey('PropertyPermissionLevels', models.DO_NOTHING)
-    premises = models.ForeignKey(Properties, models.DO_NOTHING)
+    premises = models.ForeignKey(Properties, models.CASCADE)
     user = models.ForeignKey('Users', models.DO_NOTHING)
     can_add_bookings = models.BooleanField()
     can_add_locks = models.BooleanField()
